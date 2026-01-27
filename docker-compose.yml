@@ -1,0 +1,41 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - node
+    networks:
+      - fullcycle
+
+  node:
+    build:
+      context: ./node
+    container_name: node
+    volumes:
+      - ./node:/usr/src/app
+    depends_on:
+      - db
+    networks:
+      - fullcycle
+
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_DATABASE: fullcycle
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - fullcycle
+
+networks:
+  fullcycle:
+    driver: bridge
+
+volumes:
+  mysql_data:
